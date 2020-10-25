@@ -18,7 +18,7 @@
 //  limitations under the License.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 
 //! Project version number for MarkdownKit.
 FOUNDATION_EXPORT double MarkdownKitVersionNumber;

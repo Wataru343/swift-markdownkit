@@ -18,7 +18,12 @@
 //  limitations under the License.
 //
 
+import Foundation
+#if os(macOS)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 ///
 /// `AttributedStringGenerator` provides functionality for converting Markdown blocks into
@@ -157,20 +162,20 @@ open class AttributedStringGenerator {
   /// Constructor providing customization options for the generated `NSAttributedString` markup.
   public init(fontSize: Float = 14.0,
               fontFamily: String = "\"Times New Roman\",Times,serif",
-              fontColor: String = NSColor.textColor.hexString,
+              fontColor: String = UIColor.textColor.hexString,
               codeFontSize: Float = 13.0,
               codeFontFamily: String =
                                 "\"Consolas\",\"Andale Mono\",\"Courier New\",Courier,monospace",
-              codeFontColor: String = NSColor.textColor.hexString,
+              codeFontColor: String = UIColor.textColor.hexString,
               codeBlockFontSize: Float = 12.0,
-              codeBlockFontColor: String = NSColor.textColor.hexString,
-              codeBlockBackground: String = NSColor.textBackgroundColor.hexString,
+              codeBlockFontColor: String = UIColor.textColor.hexString,
+              codeBlockBackground: String = "#f5f5f5",
               borderColor: String = "#bbb",
               blockquoteColor: String = "#99c",
-              h1Color: String = NSColor.textColor.hexString,
-              h2Color: String = NSColor.textColor.hexString,
-              h3Color: String = NSColor.textColor.hexString,
-              h4Color: String = NSColor.textColor.hexString) {
+              h1Color: String = UIColor.textColor.hexString,
+              h2Color: String = UIColor.textColor.hexString,
+              h3Color: String = UIColor.textColor.hexString,
+              h4Color: String = UIColor.textColor.hexString) {
     self.fontSize = fontSize
     self.fontFamily = fontFamily
     self.fontColor = fontColor

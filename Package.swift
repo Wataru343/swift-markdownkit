@@ -30,7 +30,7 @@ import PackageDescription
 let package = Package(
   name: "MarkdownKit",
   platforms: [
-    .macOS(.v10_12)
+    .iOS(SupportedPlatform.IOSVersion.v12)
   ],
   products: [
     .library(name: "MarkdownKit", targets: ["MarkdownKit"]),

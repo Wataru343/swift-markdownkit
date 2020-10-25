@@ -19,17 +19,35 @@
 //
 
 import Foundation
+#if os(macOS)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
-extension NSColor {
+extension UIColor {
 
   public var hexString: String {
-    guard let rgb = self.usingColorSpaceName(NSColorSpaceName.calibratedRGB) else {
+    guard let data = self.cgColor.components else {
       return "#FFFFFF"
     }
-    let red   = Int(round(rgb.redComponent * 0xff))
-    let green = Int(round(rgb.greenComponent * 0xff))
-    let blue  = Int(round(rgb.blueComponent * 0xff))
-    return String(format: "#%02X%02X%02X", red, green, blue)
+
+    var r, g, b: Int
+
+    if self.cgColor.colorSpace?.model == CGColorSpaceModel.monochrome {
+      r = Int(round(data[0] * 0xff))
+      g = Int(round(data[0] * 0xff))
+      b = Int(round(data[0] * 0xff))
+    } else {
+      r = Int(round(data[0] * 0xff))
+      g = Int(round(data[1] * 0xff))
+      b = Int(round(data[2] * 0xff))
+    }
+
+    return String(format: "#%02X%02X%02X", r, g, b)
+  }
+
+  open class var textColor: UIColor {
+    return UIColor.darkText
   }
 }
