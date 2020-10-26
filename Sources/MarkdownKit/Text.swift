@@ -133,6 +133,14 @@ public struct Text: Collection, Equatable, CustomStringConvertible, CustomDebugS
     return res
   }
 
+  public var rawString: String {
+    var res = ""
+    for fragment in self.fragments {
+      res = res + fragment.rawString
+    }
+    return res
+  }
+
   /// Returns a debug description of this `Text` object.
   public var debugDescription: String {
     var res = ""

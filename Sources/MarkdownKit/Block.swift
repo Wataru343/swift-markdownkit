@@ -134,6 +134,45 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
     return self.description
   }
 
+  public var rawString: String {
+    switch self {
+    case .document(let blocks):
+      return blocks.reduce("") { $0 + $1.rawString }
+    case .blockquote(let blocks):
+      return ">\(blocks.reduce("") { $0 + $1.rawString })"
+    case .list(_, _, let blocks):
+      return blocks.reduce("") { $0 + $1.rawString }
+    case .listItem(_, _, let blocks):
+      return "- \(blocks.reduce("") { $0 + $1.rawString })\n"
+    case .paragraph(let text):
+      return text.rawString
+    case .heading(let level, let text):
+      return "\(String(repeating: "#", count: level)) \(text.rawString)"
+    case .indentedCode(_):
+      return ""
+    case .fencedCode(let info, let lines):
+      return "```\(info ?? "")\n\(lines.reduce(""){ $0 + $1 })```"
+    case .htmlBlock(_):
+      return ""
+    case .referenceDef(let label, let dest, _):
+      return "[\(label)]: \(dest)"
+    case .thematicBreak:
+      return "***"
+    case .table(let header, let align, let rows):
+      return """
+        |\(header.reduce(""){ $0 + $1.rawString + "|" })
+        |\(align.reduce(""){ $0 + $1.rawString + "|" })
+        \(rows.reduce(""){
+            var str = $0 + "|" + $1.reduce(""){ $0 + $1.rawString + "|" }
+            str += "\n"
+            return str
+        })
+        """
+    case .definitionList(_):
+      return ""
+    }
+  }
+
   fileprivate static func string(from blocks: Blocks) -> String {
     var res = ""
     for block in blocks {
@@ -264,6 +303,19 @@ public enum Alignment: UInt, CustomStringConvertible, CustomDebugStringConvertib
   
   public var debugDescription: String {
     return self.description
+  }
+
+  public var rawString: String {
+    switch self {
+      case .undefined:
+        return "-"
+      case .left:
+        return ":---"
+      case .right:
+        return "---:"
+      case .center:
+        return ":---:"
+    }
   }
 }
 

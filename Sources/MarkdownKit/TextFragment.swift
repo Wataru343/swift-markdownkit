@@ -104,6 +104,37 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
     }
   }
 
+  public var rawString: String {
+    switch self {
+    case .text(let str):
+      return str.description
+    case .code(let str):
+      return "`\(str.description)`"
+    case .emph(let text):
+      return "*\(text.rawString)*"
+    case .strong(let text):
+      return "**\(text.rawString)**"
+    case .link(let text, let url, _):
+        return "[\(text.rawString)](\(url ?? ""))"
+    case .autolink(_, let uri):
+      return uri.description
+    case .image(let text, let url, let title):
+        return "\(text.rawString): ![alt text](\(url ?? "") \"\(title ?? "")\")"
+    case .html(let tag):
+      return "<\(tag.description)>"
+    case .delimiter(let ch, let n, let type):
+      var res = String(ch)
+        for _ in 1..<n {
+          res.append(ch)
+        }
+        return type.contains(.image) ? "!" + res : res
+    case .softLineBreak:
+      return "\n"
+    case .hardLineBreak:
+      return "\n"
+    }
+  }
+
   /// Returns a debug description of this `TextFragment` object.
   public var debugDescription: String {
     switch self {
