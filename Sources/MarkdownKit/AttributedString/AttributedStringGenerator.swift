@@ -58,8 +58,7 @@ open class AttributedStringGenerator {
                  self.generate(blocks: blocks) +
                  "</td></tr><tr style=\"height: 0;\"><td /><td /><td /></tr></tbody></table>\n"
         case .thematicBreak:
-          return "<p><table style=\"width: 100%; margin-bottom: 3px;\"><tbody>" +
-                 "<tr><td class=\"thematic\"></td></tr></tbody></table></p>\n"
+          return "<hr>\n"
         case .table(let header, let align, let rows):
           var tagsuffix: [String] = []
           for a in align {
