@@ -193,24 +193,24 @@ open class AttributedStringGenerator {
   }
 
   /// Generates an attributed string from the given Markdown document
-  open func generate(doc: Block) -> NSAttributedString? {
+  open func generate(doc: Block) -> NSMutableAttributedString? {
     return self.generateAttributedString(self.htmlGenerator.generate(doc: doc))
   }
 
   /// Generates an attributed string from the given Markdown blocks
-  open func generate(block: Block) -> NSAttributedString? {
+  open func generate(block: Block) -> NSMutableAttributedString? {
     return self.generateAttributedString(self.htmlGenerator.generate(block: block))
   }
 
   /// Generates an attributed string from the given Markdown blocks
-  open func generate(blocks: Blocks) -> NSAttributedString? {
+  open func generate(blocks: Blocks) -> NSMutableAttributedString? {
     return self.generateAttributedString(self.htmlGenerator.generate(blocks: blocks))
   }
-  
-  private func generateAttributedString(_ htmlBody: String) -> NSAttributedString? {
+
+  private func generateAttributedString(_ htmlBody: String) -> NSMutableAttributedString? {
     let htmlDoc = self.generateHtml(htmlBody)
     let httpData = Data(htmlDoc.utf8)
-    return try? NSAttributedString(data: httpData,
+    return try? NSMutableAttributedString(data: httpData,
                                    options: [.documentType: NSAttributedString.DocumentType.html,
                                              .characterEncoding: String.Encoding.utf8.rawValue],
                                    documentAttributes: nil)
