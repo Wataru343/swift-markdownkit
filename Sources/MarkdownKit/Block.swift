@@ -134,16 +134,16 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
     return self.description
   }
 
-  public var rawString: String {
+  private func rawString(depth n: Int)-> String {
     switch self {
     case .document(let blocks):
-      return blocks.reduce("") { $0 + $1.rawString }
+      return blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
     case .blockquote(let blocks):
-      return ">\(blocks.reduce("") { $0 + $1.rawString })"
+        return String(repeating: ">", count: n + 1) + blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n" }
     case .list(_, _, let blocks):
-      return blocks.reduce("") { $0 + $1.rawString }
+      return blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
     case .listItem(_, _, let blocks):
-      return "- \(blocks.reduce("") { $0 + $1.rawString })\n"
+      return "- \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
     case .paragraph(let text):
       return text.rawString
     case .heading(let level, let text):
@@ -171,6 +171,10 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
     case .definitionList(_):
       return ""
     }
+  }
+
+  public var rawString: String {
+    return rawString(depth: 0)
   }
 
   fileprivate static func string(from blocks: Blocks) -> String {
