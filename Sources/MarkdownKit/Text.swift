@@ -141,6 +141,17 @@ public struct Text: Collection, Equatable, CustomStringConvertible, CustomDebugS
     return res
   }
 
+  public var isImage: Bool {
+    for fragment in self.fragments {
+        switch fragment {
+        case .image:
+            return true
+        default: break
+        }
+    }
+    return false
+  }
+
   /// Returns a debug description of this `Text` object.
   public var debugDescription: String {
     var res = ""
