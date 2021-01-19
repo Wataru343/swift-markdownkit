@@ -133,6 +133,41 @@ public final class DelimiterTransformer: InlineTransformer {
             i = j
             escape = false
           }
+        case "&": // white space
+          guard !escape else {
+            i = str.index(after: i)
+            escape = false
+            break
+          }
+
+          if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&nbsp;" {
+            res.append(fragment: .text(str[start..<i]))
+            res.append(fragment: .text(" "))// U+0020
+            i = j
+            split = true
+            start = i
+          } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&ensp;" {
+            res.append(fragment: .text(str[start..<i]))
+            res.append(fragment: .text(" "))// U+2002
+            i = j
+            split = true
+            start = i
+          } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&emsp;" {
+            res.append(fragment: .text(str[start..<i]))
+            res.append(fragment: .text(" "))// U+2003
+            i = j
+            split = true
+            start = i
+          } else if let j = str.index(i, offsetBy: 8, limitedBy: str.endIndex), str[i..<j] == "&thinsp;" {
+            res.append(fragment: .text(str[start..<i]))
+            res.append(fragment: .text(" "))// U+2009
+            i = j
+            split = true
+            start = i
+          } else {
+            i = str.index(after: i)
+            escape = false
+          }
         case "\\":
           i = str.index(after: i)
           escape = !escape
