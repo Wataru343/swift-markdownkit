@@ -34,11 +34,12 @@ public final class DelimiterTransformer: InlineTransformer {
     var i = str.startIndex
     var start = i
     var escape = false
+    var code = false
     var split = false
     while i < str.endIndex {
       switch str[i] {
         case "*", "_":
-          if !escape {
+          if !escape && !code {
             var n = 1
             var j = str.index(after: i)
             while j < str.endIndex && str[j] == str[i] {
@@ -106,8 +107,9 @@ public final class DelimiterTransformer: InlineTransformer {
           start = j
           i = j
           escape = false
+          code = !code
         case "<", ">", "[", "]", "(", ")", "\"", "'":
-          if !escape {
+          if !escape && !code {
             if start < i {
               res.append(fragment: .text(str[start..<i]))
             }
@@ -121,7 +123,7 @@ public final class DelimiterTransformer: InlineTransformer {
           }
         case "!":
           let j = str.index(after: i)
-          if !escape && j < str.endIndex && str[j] == "[" {
+          if !escape && !code && j < str.endIndex && str[j] == "[" {
             if start < i {
               res.append(fragment: .text(str[start..<i]))
             }
@@ -134,7 +136,7 @@ public final class DelimiterTransformer: InlineTransformer {
             escape = false
           }
         case "&": // white space
-          guard !escape else {
+          guard !escape && !code else {
             i = str.index(after: i)
             escape = false
             break
@@ -170,7 +172,9 @@ public final class DelimiterTransformer: InlineTransformer {
           }
         case "\\":
           i = str.index(after: i)
-          escape = !escape
+          if !code {
+            escape = !escape
+          }
         default:
           i = str.index(after: i)
           escape = false
