@@ -109,7 +109,7 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
     case .text(let str):
       return str.description
     case .code(let str):
-      return "`\(str.description)`"
+        return "`\(str.description.trimmingCharacters(in: .whitespaces))`"
     case .emph(let text):
       return "*\(text.rawString)*"
     case .strong(let text):
