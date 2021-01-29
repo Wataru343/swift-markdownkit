@@ -143,26 +143,38 @@ public final class DelimiterTransformer: InlineTransformer {
           }
 
           if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&nbsp;" {
-            res.append(fragment: .text(str[start..<i]))
-            res.append(fragment: .text(" "))// U+0020
+            let s = str[start..<i]
+            if s.count > 0 {
+              res.append(fragment: .text(s))
+            }
+            res.append(fragment: .whiteSpace("\u{0020}"))
             i = j
             split = true
             start = i
           } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&ensp;" {
-            res.append(fragment: .text(str[start..<i]))
-            res.append(fragment: .text(" "))// U+2002
+            let s = str[start..<i]
+            if s.count > 0 {
+              res.append(fragment: .text(s))
+            }
+            res.append(fragment: .whiteSpace("\u{2002}"))
             i = j
             split = true
             start = i
           } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&emsp;" {
-            res.append(fragment: .text(str[start..<i]))
-            res.append(fragment: .text(" "))// U+2003
+            let s = str[start..<i]
+            if s.count > 0 {
+              res.append(fragment: .text(s))
+            }
+            res.append(fragment: .whiteSpace("\u{2003}"))
             i = j
             split = true
             start = i
           } else if let j = str.index(i, offsetBy: 8, limitedBy: str.endIndex), str[i..<j] == "&thinsp;" {
-            res.append(fragment: .text(str[start..<i]))
-            res.append(fragment: .text(" "))// U+2009
+            let s = str[start..<i]
+            if s.count > 0 {
+              res.append(fragment: .text(s))
+            }
+            res.append(fragment: .whiteSpace("\u{2009}"))
             i = j
             split = true
             start = i
@@ -171,10 +183,23 @@ public final class DelimiterTransformer: InlineTransformer {
             escape = false
           }
         case "\\":
+          let s = str[start..<i]
+          if s.count > 0 {
+            res.append(fragment: .text(s))
+          }
+
           i = str.index(after: i)
           if !code {
             escape = !escape
           }
+
+          if escape {
+            res.append(fragment: .escape)
+          } else {
+            res.append(fragment: .text("\\\\"))
+          }
+          split = true
+          start = i
         default:
           i = str.index(after: i)
           escape = false

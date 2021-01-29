@@ -185,6 +185,10 @@ open class HtmlGenerator {
         return "\n"
       case .hardLineBreak:
         return "<br/>"
+      case .escape:
+        return ""
+      case .whiteSpace(let str):
+        return String(str)
     }
   }
 

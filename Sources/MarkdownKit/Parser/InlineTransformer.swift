@@ -68,6 +68,10 @@ open class InlineTransformer {
         res.append(fragment: fragment)
       case .softLineBreak, .hardLineBreak:
         res.append(fragment: fragment)
+      case .escape:
+        res.append(fragment: fragment)
+      case .whiteSpace(_):
+        res.append(fragment: fragment)
     }
     return iterator.next()
   }

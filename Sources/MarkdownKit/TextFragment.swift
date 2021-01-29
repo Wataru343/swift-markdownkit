@@ -37,6 +37,8 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
   case delimiter(Character, Int, DelimiterRunType)
   case softLineBreak
   case hardLineBreak
+  case escape
+  case whiteSpace(Substring)
 
   /// Returns a description of this `TextFragment` object as a string as if the text would be
   /// represented in Markdown.
@@ -68,6 +70,10 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
         return "\n"
       case .hardLineBreak:
         return "\n"
+      case .escape:
+        return ""
+      case .whiteSpace(let str):
+        return str.description
     }
   }
 
@@ -101,37 +107,45 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
         return " "
       case .hardLineBreak:
         return " "
+      case .escape:
+        return ""
+      case .whiteSpace(let text):
+        return text.description
     }
   }
 
   public var rawString: String {
     switch self {
-    case .text(let str):
-      return str.description
-    case .code(let str):
-        return "`\(str.description.trimmingCharacters(in: .whitespaces))`"
-    case .emph(let text):
-      return "*\(text.rawString)*"
-    case .strong(let text):
-      return "**\(text.rawString)**"
-    case .link(let text, let url, _):
-        return "[\(text.rawString)](\(url ?? ""))"
-    case .autolink(_, let uri):
-      return uri.description
-    case .image(let text, let url, let title):
-        return "\(text.rawString): ![alt text](\(url ?? "") \"\(title ?? "")\")"
-    case .html(let tag):
-      return "<\(tag.description)>"
-    case .delimiter(let ch, let n, let type):
-      var res = String(ch)
-        for _ in 1..<n {
-          res.append(ch)
-        }
-        return type.contains(.image) ? "!" + res : res
-    case .softLineBreak:
-      return "\n"
-    case .hardLineBreak:
-      return "\n"
+      case .text(let str):
+        return str.description
+      case .code(let str):
+          return "`\(str.description.trimmingCharacters(in: .whitespaces))`"
+      case .emph(let text):
+        return "*\(text.rawString)*"
+      case .strong(let text):
+        return "**\(text.rawString)**"
+      case .link(let text, let url, _):
+          return "[\(text.rawString)](\(url ?? ""))"
+      case .autolink(_, let uri):
+        return uri.description
+      case .image(let text, let url, let title):
+          return "\(text.rawString): ![alt text](\(url ?? "") \"\(title ?? "")\")"
+      case .html(let tag):
+        return "<\(tag.description)>"
+      case .delimiter(let ch, let n, let type):
+        var res = String(ch)
+          for _ in 1..<n {
+            res.append(ch)
+          }
+          return type.contains(.image) ? "!" + res : res
+      case .softLineBreak:
+        return "\n"
+      case .hardLineBreak:
+        return "\n"
+      case .escape:
+        return "\\"
+      case .whiteSpace(_):
+        return self.whiteSpaceToCode(fragment: self)
     }
   }
 
@@ -162,6 +176,30 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
         return "softLineBreak"
       case .hardLineBreak:
         return "hardLineBreak"
+      case .escape:
+        return "escape"
+      case .whiteSpace(_):
+        return "whiteSpace(\(self.whiteSpaceToCode(fragment: self)))"
+    }
+  }
+
+  public func whiteSpaceToCode(fragment: TextFragment) -> String {
+    switch fragment {
+      case .whiteSpace(let fragment):
+        switch fragment {
+          case "\u{0020}":
+            return "&nbsp;"
+          case "\u{2002}":
+            return "&ensp;"
+          case "\u{2003}":
+            return "&emsp;"
+          case "\u{2009}":
+            return "&thinsp;"
+          default:
+            return ""
+        }
+      default:
+        return ""
     }
   }
 }
