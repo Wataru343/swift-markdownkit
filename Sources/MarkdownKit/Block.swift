@@ -148,8 +148,8 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
       return text.rawString
     case .heading(let level, let text):
       return "\(String(repeating: "#", count: level)) \(text.rawString)"
-    case .indentedCode(_):
-      return ""
+    case .indentedCode(let lines):
+        return "    \(lines.reduce(""){ $0 + $1 })"
     case .fencedCode(let info, let lines):
       return "```\(info ?? "")\n\(lines.reduce(""){ $0 + $1 })```"
     case .htmlBlock(_):
