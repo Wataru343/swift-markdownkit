@@ -142,8 +142,13 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
         return String(repeating: ">", count: n + 1) + blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n" }
     case .list(_, _, let blocks):
       return blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
-    case .listItem(_, _, let blocks):
-      return "- \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
+    case .listItem(let item, _, let blocks):
+      switch item {
+      case .bullet(_):
+        return "- \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
+      case .ordered(let num, let delimiter):
+        return "\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
+      }
     case .paragraph(let text):
       return text.rawString
     case .heading(let level, let text):
