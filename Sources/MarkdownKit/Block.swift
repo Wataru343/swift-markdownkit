@@ -141,11 +141,24 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
     case .blockquote(let blocks):
         return String(repeating: ">", count: n + 1) + blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n" }
     case .list(_, _, let blocks):
-      return blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
+      var list = blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
+      if n == 0 {
+        while let range = list.range(of: "\n{2,}", options: .regularExpression) {
+          list.replaceSubrange(range, with: "\n")
+        }
+      }
+
+      return list
     case .listItem(let item, _, let blocks):
+        var hasParagraph: Bool {
+        if case .paragraph(_) = blocks.first {
+            return true
+        }
+        return false
+      }
       switch item {
       case .bullet(let space, let prefix):
-        return "\(space.rawString)\(prefix) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n"})"
+        return "\(space.rawString)\(prefix) \(hasParagraph ? "" : "\n")\(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n"})\n"
       case .ordered(let space, let num, let delimiter):
         return "\(space.rawString)\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
       }
