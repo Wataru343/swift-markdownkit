@@ -150,7 +150,7 @@ public final class LinkTransformer: InlineTransformer {
       // Parsing regular destinations
       default:
         var open = 0
-        if case .some(.text(let str)) = element,
+        if case .some(.text(let str, _)) = element,
            let index = str.firstIndex(where: { ch in !isAsciiWhitespaceOrControl(ch) }),
            index < str.endIndex {
           destination += str[index..<str.endIndex]
@@ -173,7 +173,7 @@ public final class LinkTransformer: InlineTransformer {
                 return link ? .link(text, destination.isEmpty ? nil : destination, nil)
                             : .image(text, destination.isEmpty ? nil : destination, nil)
               }
-            case .text(let str):
+            case .text(let str, _):
               if let index = str.firstIndex(where: isAsciiWhitespaceOrControl) {
                 guard isWhitespaceString(str[index..<str.endIndex]) else {
                   return nil
@@ -244,7 +244,7 @@ public final class LinkTransformer: InlineTransformer {
       switch fragment {
         case .hardLineBreak, .softLineBreak:
           break
-        case .text(let str) where isWhitespaceString(str):
+        case .text(let str, _) where isWhitespaceString(str):
           break
         default:
           return element

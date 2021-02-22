@@ -39,6 +39,7 @@ open class DocumentParser {
 
   internal var prevParagraphLines: Text?
   internal var line: Substring
+  internal var space: Substring
   internal var contentStartIndex: Substring.Index
   internal var contentEndIndex: Substring.Index
   internal var lineIndent: Int
@@ -55,6 +56,7 @@ open class DocumentParser {
     self.currentContainer = docContainer
     self.prevParagraphLines = nil
     self.line = input[input.startIndex..<input.startIndex]
+    self.space = Substring()
     self.contentStartIndex = self.line.startIndex
     self.contentEndIndex = self.line.endIndex
     self.lineIndent = 0
@@ -131,11 +133,17 @@ open class DocumentParser {
     } else {
       self.index = self.input.endIndex
     }
+
     let (newstart, container) = self.container.parseIndent(input: self.input,
                                                            startIndex: startIndex,
                                                            endIndex: self.index!)
     self.currentContainer = container
     self.line = self.input[newstart..<self.index!]
+
+    if let range = self.input[startIndex..<self.index!].range(of: "^\\s+", options: .regularExpression) {
+        self.space = self.input[startIndex..<self.index!][range]
+    }
+
     if index < self.input.endIndex {
       self.contentEndIndex = self.line.index(before: self.line.endIndex)
     } else {
@@ -200,7 +208,7 @@ open class DocumentParser {
           }
         }
         var lines = Text()
-        lines.append(line: self.trimLine(), withHardLineBreak: self.hasHardLineBreak())
+        lines.append(line: self.trimLine(), space: self.space, withHardLineBreak: self.hasHardLineBreak())
         self.readNextLine()
         while !self.finished && !self.lineEmpty {
           self.prevParagraphLines = lines
@@ -229,7 +237,7 @@ open class DocumentParser {
             }
           }
           self.prevParagraphLines = nil
-          lines.append(line: self.trimLine(), withHardLineBreak: self.hasHardLineBreak())
+            lines.append(line: self.trimLine(), space: self.space, withHardLineBreak: self.hasHardLineBreak())
           self.readNextLine()
         }
         self.container.content.append(.paragraph(lines.finalized()))

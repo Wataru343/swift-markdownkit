@@ -41,7 +41,7 @@ open class ExtendedDocumentParser: DocumentParser {
     while i < bundled.count {
       guard case .paragraph(let text) = bundled[i - 1],
             case .list(_, _, let listItems) = bundled[i],
-            case .some(.listItem(.bullet(":"), _, _)) = listItems.first else {
+            case .some(.listItem(.bullet(Text(""), ":"), _, _)) = listItems.first else {
         if definitions.count > 0 {
           res.append(.definitionList(definitions))
           definitions.removeAll()

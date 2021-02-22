@@ -51,7 +51,7 @@ open class TableParser: RestorableBlockParser {
     }
     var alignments = Alignments()
     for cell in alignrow {
-      guard case .some(.text(let str)) = cell.first, str.count > 0 else {
+      guard case .some(.text(let str, _)) = cell.first, str.count > 0 else {
         return .none
       }
       var check: Substring
@@ -122,7 +122,7 @@ open class TableParser: RestorableBlockParser {
         if text == nil {
           res.append(Text(self.line[i..<k]))
         } else {
-          text!.append(fragment: .text(self.line[i..<k]))
+          text!.append(fragment: .text(self.line[i..<k], ""))
           res.append(text!)
           text = nil
         }
@@ -133,7 +133,7 @@ open class TableParser: RestorableBlockParser {
         if text == nil {
           text = Text(self.line[i..<self.line.index(before: k)])
         } else {
-          text!.append(fragment: .text(self.line[i..<self.line.index(before: k)]))
+          text!.append(fragment: .text(self.line[i..<self.line.index(before: k)], ""))
         }
         self.readNextLine()
         i = self.contentStartIndex
@@ -142,7 +142,7 @@ open class TableParser: RestorableBlockParser {
         if text == nil {
           res.append(Text(self.line[i..<k]))
         } else {
-          text!.append(fragment: .text(self.line[i..<k]))
+          text!.append(fragment: .text(self.line[i..<k], ""))
           res.append(text!)
           text = nil
         }

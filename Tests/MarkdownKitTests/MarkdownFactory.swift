@@ -43,12 +43,12 @@ extension MarkdownKitFactory {
           }
         }
 
-        res.append(fragment: .text(Substring(str)))
+        res.append(fragment: .text(Substring(str), ""))
       } else {
         res.append(fragment: .hardLineBreak)
       }
     }
-    return .paragraph(res)
+    return .paragraph(Text(""))
   }
 
   func paragraph(_ fragments: TextFragment...) -> Block {
@@ -56,7 +56,7 @@ extension MarkdownKitFactory {
     for fragment in fragments {
       res.append(fragment: fragment)
     }
-    return .paragraph(res)
+    return .paragraph(Text(""))
   }
 
   func emph(_ fragments: TextFragment...) -> TextFragment {
@@ -107,7 +107,7 @@ extension MarkdownKitFactory {
             res.append(fragment: .softLineBreak)
           }
         }
-        res.append(fragment: .text(Substring(str)))
+        res.append(fragment: .text(Substring(str), ""))
       } else {
         res.append(fragment: .hardLineBreak)
       }
@@ -136,11 +136,11 @@ extension MarkdownKitFactory {
   }
 
   func listItem(_ num: Int, _ sep: Character, tight: Bool = false, _ bs: Block...) -> Block {
-    return .listItem(.ordered(num, sep), tight, ContiguousArray(bs))
+    return .listItem(.ordered(Text(), num, sep), tight, ContiguousArray(bs))
   }
 
   func listItem(_ bullet: Character, tight: Bool = false, _ bs: Block...) -> Block {
-    return .listItem(.bullet(bullet), tight, ContiguousArray(bs))
+    return .listItem(.bullet(Text(), bullet), tight, ContiguousArray(bs))
   }
 
   func htmlBlock(_ lines: Substring...) -> Block {
@@ -162,7 +162,7 @@ extension MarkdownKitFactory {
           } else {
             var text = Text()
             for component in components {
-              text.append(fragment: .text(Substring(component)))
+              text.append(fragment: .text(Substring(component), ""))
             }
             res.append(text)
           }
@@ -189,7 +189,7 @@ extension MarkdownKitFactory {
         for block in blocks {
           content.append(block)
         }
-        res.append(.listItem(.bullet(":"), tight, content))
+        res.append(.listItem(.bullet(Text(), ":"), tight, content))
         if content.count > 1 {
           tight = false
         }

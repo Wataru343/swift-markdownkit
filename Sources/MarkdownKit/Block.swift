@@ -144,10 +144,10 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
       return blocks.reduce("") { $0 + $1.rawString(depth: n + 1) }
     case .listItem(let item, _, let blocks):
       switch item {
-      case .bullet(_):
-        return "- \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
-      case .ordered(let num, let delimiter):
-        return "\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
+      case .bullet(let space, let prefix):
+        return "\(space.rawString)\(prefix) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n"})"
+      case .ordered(let space, let num, let delimiter):
+        return "\(space.rawString)\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
       }
     case .paragraph(let text):
       return text.rawString
@@ -245,23 +245,23 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
 /// Enumeration of Markdown list types.
 /// 
 public enum ListType: Equatable, CustomStringConvertible, CustomDebugStringConvertible {
-  case bullet(Character)
-  case ordered(Int, Character)
+  case bullet(Text, Character)
+  case ordered(Text, Int, Character)
 
   public var startNumber: Int? {
     switch self {
-      case .bullet(_):
+      case .bullet(_, _):
         return nil
-      case .ordered(let start, _):
+      case .ordered(_, let start, _):
         return start
     }
   }
 
   public func compatible(with other: ListType) -> Bool {
     switch (self, other) {
-      case (.bullet(let lc), .bullet(let rc)):
+      case (.bullet(_, let lc), .bullet(_, let rc)):
         return lc == rc
-      case (.ordered(_, let lc), .ordered(_, let rc)):
+      case (.ordered(_, _, let lc), .ordered(_, _, let rc)):
         return lc == rc
       default:
         return false
@@ -270,9 +270,9 @@ public enum ListType: Equatable, CustomStringConvertible, CustomDebugStringConve
 
   public var description: String {
     switch self {
-      case .bullet(let char):
+      case .bullet(_, let char):
         return "bullet(\(char.description))"
-      case .ordered(let num, let delimiter):
+      case .ordered(_, let num, let delimiter):
         return "ordered(\(num), \(delimiter))"
     }
   }

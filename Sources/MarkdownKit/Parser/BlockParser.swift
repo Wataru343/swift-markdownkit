@@ -55,6 +55,15 @@ open class BlockParser {
   public var line: Substring {
     return self.docParser.line
   }
+
+  public var space: Substring {
+    get {
+      return self.docParser.space
+    }
+    set {
+      self.docParser.space = newValue
+    }
+  }
   
   public var contentStartIndex: Substring.Index {
     return self.docParser.contentStartIndex

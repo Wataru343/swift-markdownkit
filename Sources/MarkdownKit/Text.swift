@@ -30,9 +30,9 @@ public struct Text: Collection, Equatable, CustomStringConvertible, CustomDebugS
 
   private var fragments: ContiguousArray<TextFragment> = []
 
-  public init(_ str: Substring? = nil) {
+  public init(_ str: Substring? = nil, space: Substring = "") {
     if let str = str {
-      self.fragments.append(.text(str))
+      self.fragments.append(.text(str, space))
     }
   }
 
@@ -56,22 +56,22 @@ public struct Text: Collection, Equatable, CustomStringConvertible, CustomDebugS
   }
 
   /// Appends a line of text, potentially followed by a hard line break
-  mutating public func append(line: Substring, withHardLineBreak: Bool) {
+  mutating public func append(line: Substring, space: Substring, withHardLineBreak: Bool) {
     let n = self.fragments.count
-    if n > 0, case .text(let str) = self.fragments[n - 1] {
+    if n > 0, case .text(let str, let space) = self.fragments[n - 1] {
       if str.last == "\\" {
         let newline = str[str.startIndex..<str.index(before: str.endIndex)]
         if newline.isEmpty {
           self.fragments[n - 1] = .hardLineBreak
         } else {
-          self.fragments[n - 1] = .text(newline)
+          self.fragments[n - 1] = .text(newline, space)
           self.fragments.append(.hardLineBreak)
         }
       } else {
         self.fragments.append(.softLineBreak)
       }
     }
-    self.fragments.append(.text(line))
+    self.fragments.append(.text(line, space))
     if withHardLineBreak {
       self.fragments.append(.hardLineBreak)
     }

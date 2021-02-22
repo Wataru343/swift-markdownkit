@@ -28,7 +28,7 @@ public final class DelimiterTransformer: InlineTransformer {
   public override func transform(_ fragment: TextFragment,
                                  from iterator: inout Text.Iterator,
                                  into res: inout Text) -> TextFragment? {
-    guard case .text(let str) = fragment else {
+    guard case .text(let str, let space) = fragment else {
       return super.transform(fragment, from: &iterator, into: &res)
     }
     var i = str.startIndex
@@ -52,7 +52,7 @@ public final class DelimiterTransformer: InlineTransformer {
             // j: index of character succeeding the delimiter run
             if start < i || (start == i && i > str.startIndex) {
               if start < i {
-                res.append(fragment: .text(str[start..<i]))
+                res.append(fragment: .text(str[start..<i], ""))
               }
               let h = str.index(before: i)
               if j < str.endIndex &&
@@ -100,7 +100,7 @@ public final class DelimiterTransformer: InlineTransformer {
             n += 1
           }
           if start < i {
-            res.append(fragment: .text(str[start..<i]))
+            res.append(fragment: .text(str[start..<i], ""))
           }
           res.append(fragment: .delimiter("`", n, escape ? .escaped : []))
           split = true
@@ -111,7 +111,7 @@ public final class DelimiterTransformer: InlineTransformer {
         case "<", ">", "[", "]", "(", ")", "\"", "'":
           if !escape && !code {
             if start < i {
-              res.append(fragment: .text(str[start..<i]))
+              res.append(fragment: .text(str[start..<i], ""))
             }
             res.append(fragment: .delimiter(str[i], 1, []))
             split = true
@@ -125,7 +125,7 @@ public final class DelimiterTransformer: InlineTransformer {
           let j = str.index(after: i)
           if !escape && !code && j < str.endIndex && str[j] == "[" {
             if start < i {
-              res.append(fragment: .text(str[start..<i]))
+              res.append(fragment: .text(str[start..<i], ""))
             }
             res.append(fragment: .delimiter("[", 1, .image))
             split = true
@@ -145,7 +145,7 @@ public final class DelimiterTransformer: InlineTransformer {
           if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&nbsp;" {
             let s = str[start..<i]
             if s.count > 0 {
-              res.append(fragment: .text(s))
+              res.append(fragment: .text(s, ""))
             }
             res.append(fragment: .whiteSpace("\u{0020}"))
             i = j
@@ -154,7 +154,7 @@ public final class DelimiterTransformer: InlineTransformer {
           } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&ensp;" {
             let s = str[start..<i]
             if s.count > 0 {
-              res.append(fragment: .text(s))
+              res.append(fragment: .text(s, ""))
             }
             res.append(fragment: .whiteSpace("\u{2002}"))
             i = j
@@ -163,7 +163,7 @@ public final class DelimiterTransformer: InlineTransformer {
           } else if let j = str.index(i, offsetBy: 6, limitedBy: str.endIndex), str[i..<j] == "&emsp;" {
             let s = str[start..<i]
             if s.count > 0 {
-              res.append(fragment: .text(s))
+              res.append(fragment: .text(s, ""))
             }
             res.append(fragment: .whiteSpace("\u{2003}"))
             i = j
@@ -172,7 +172,7 @@ public final class DelimiterTransformer: InlineTransformer {
           } else if let j = str.index(i, offsetBy: 8, limitedBy: str.endIndex), str[i..<j] == "&thinsp;" {
             let s = str[start..<i]
             if s.count > 0 {
-              res.append(fragment: .text(s))
+              res.append(fragment: .text(s, ""))
             }
             res.append(fragment: .whiteSpace("\u{2009}"))
             i = j
@@ -185,7 +185,7 @@ public final class DelimiterTransformer: InlineTransformer {
         case "\\":
           let s = str[start..<i]
           if s.count > 0 {
-            res.append(fragment: .text(s))
+            res.append(fragment: .text(s, ""))
           }
 
           i = str.index(after: i)
@@ -196,7 +196,7 @@ public final class DelimiterTransformer: InlineTransformer {
           if escape {
             res.append(fragment: .escape)
           } else {
-            res.append(fragment: .text("\\\\"))
+            res.append(fragment: .text("\\\\", ""))
           }
           split = true
           start = i
@@ -207,7 +207,7 @@ public final class DelimiterTransformer: InlineTransformer {
     }
     if split {
       if start < str.endIndex {
-        res.append(fragment: .text(str[start...]))
+        res.append(fragment: .text(str[start...], ""))
       }
     } else {
       res.append(fragment: fragment)

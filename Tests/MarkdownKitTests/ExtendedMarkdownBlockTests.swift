@@ -171,9 +171,9 @@ class ExtendedMarkdownBlockTests: XCTestCase, MarkdownKitFactory {
                                "Hardware\n" +
                                ": physical components of a computer\n"),
                    document(definitionList(
-                             ("Software", [[paragraph(.text("programs used by a"),
+                             ("Software", [[paragraph(.text("programs used by a", ""),
                                                       .softLineBreak,
-                                                      .text("computer"))],
+                                                      .text("computer", ""))],
                                            [paragraph("operating instructions")]]),
                              ("Hardware", [[paragraph("physical components of a computer")]]))))
     XCTAssertEqual(parseBlocks("# Header\n\n" +
@@ -194,9 +194,9 @@ class ExtendedMarkdownBlockTests: XCTestCase, MarkdownKitFactory {
                                                  listItem("-", tight: true, paragraph("computer"))),
                                             paragraph("and other systems")],
                                            [paragraph("operating instructions")]]),
-                             ("Hardware", [[blockquote(paragraph(.text("One"),
+                             ("Hardware", [[blockquote(paragraph(.text("One", ""),
                                                                  .softLineBreak,
-                                                                 .text("Two")))]]))))
+                                                                 .text("Two", "")))]]))))
   }
   
   func testEmptyDocuments() {

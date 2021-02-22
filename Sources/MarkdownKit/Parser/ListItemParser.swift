@@ -45,11 +45,13 @@ open class ListItemParser: BlockParser {
     let bullet: Character
     let indent: Int
     let tight: Bool
+    let space: Text
 
-    init(bullet: Character, tight: Bool, indent: Int, outer: Container) {
+    init(bullet: Character, tight: Bool, indent: Int, outer: Container, space: Text) {
       self.bullet = bullet
       self.indent = indent
       self.tight = tight
+      self.space = space
       super.init(outer: outer)
     }
 
@@ -76,7 +78,7 @@ open class ListItemParser: BlockParser {
     }
 
     public override func makeBlock(_ docParser: DocumentParser) -> Block {
-      return .listItem(.bullet(self.bullet), self.tight, docParser.bundle(blocks: self.content))
+      return .listItem(.bullet(self.space, self.bullet), self.tight, docParser.bundle(blocks: self.content))
     }
 
     public override var debugDescription: String {
@@ -87,13 +89,13 @@ open class ListItemParser: BlockParser {
   private final class OrderedListItemContainer: BulletListItemContainer {
     let number: Int
 
-    init(number: Int, delimiter: Character, tight: Bool, indent: Int, outer: Container) {
+    init(number: Int, delimiter: Character, tight: Bool, indent: Int, outer: Container, space: Text) {
       self.number = number
-      super.init(bullet: delimiter, tight: tight, indent: indent, outer: outer)
+      super.init(bullet: delimiter, tight: tight, indent: indent, outer: outer, space: space)
     }
 
     public override func makeBlock(_ docParser: DocumentParser) -> Block {
-      return .listItem(.ordered(self.number, self.bullet),
+        return .listItem(.ordered(self.space, self.number, self.bullet),
                        self.tight,
                        docParser.bundle(blocks: self.content))
     }
@@ -164,19 +166,26 @@ open class ListItemParser: BlockParser {
       indent = 1
     }
     indent += self.lineIndent + listMarkerIndent
+
+    //
     self.docParser.resetLineStart(i)
     let tight = !self.prevLineEmpty
     if let number = number {
       return .container { encl in
-        OrderedListItemContainer(number: number,
+        let text = Text("", space: self.space)
+        self.space.removeAll()
+        return OrderedListItemContainer(number: number,
                                  delimiter: marker,
                                  tight: tight,
                                  indent: indent,
-                                 outer: encl)
+                                 outer: encl,
+                                 space: text)
       }
     } else {
       return .container { encl in
-        BulletListItemContainer(bullet: marker, tight: tight, indent: indent, outer: encl)
+        let text = Text("", space: self.space)
+        self.space.removeAll()
+        return BulletListItemContainer(bullet: marker, tight: tight, indent: indent, outer: encl, space: text)
       }
     }
   }

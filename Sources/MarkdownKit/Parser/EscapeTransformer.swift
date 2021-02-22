@@ -29,8 +29,8 @@ public final class EscapeTransformer: InlineTransformer {
                                  from iterator: inout Text.Iterator,
                                  into res: inout Text) -> TextFragment? {
     switch fragment {
-      case .text(let str):
-        res.append(fragment: .text(self.resolveEscapes(str)))
+      case .text(let str, let space):
+        res.append(fragment: .text(self.resolveEscapes(str), space))
       case .link(let inner, let uri, let title):
         res.append(fragment: .link(self.transform(inner), uri, self.resolveEscapes(title)))
       case .image(let inner, let uri, let title):

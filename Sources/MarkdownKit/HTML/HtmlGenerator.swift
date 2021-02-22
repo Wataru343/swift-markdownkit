@@ -152,7 +152,7 @@ open class HtmlGenerator {
 
   open func generate(textFragment fragment: TextFragment) -> String {
     switch fragment {
-      case .text(let str):
+      case .text(let str, _):
         return String(str)
       case .code(let str):
         return "<code>" + str + "</code>"

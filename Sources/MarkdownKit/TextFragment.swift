@@ -26,7 +26,7 @@ import Foundation
 /// markup can be arbitrarily nested, this is a recursive data structure (via struct `Text`).
 ///
 public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringConvertible {
-  case text(Substring)
+  case text(Substring, Substring)
   case code(Substring)
   case emph(Text)
   case strong(Text)
@@ -44,7 +44,7 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
   /// represented in Markdown.
   public var description: String {
     switch self {
-      case .text(let str):
+      case .text(let str, _):
         return str.description
       case .code(let str):
         return "`\(str.description)`"
@@ -81,7 +81,7 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
   /// fragment would be represented in Markdown but ignoring all markup.
   public var rawDescription: String {
     switch self {
-      case .text(let str):
+      case .text(let str, _):
         return str.description
       case .code(let str):
         return str.description
@@ -116,8 +116,8 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
 
   public var rawString: String {
     switch self {
-      case .text(let str):
-        return str.description
+      case .text(let str, let space):
+        return space.description + str.description
       case .code(let str):
           return "`\(str.description.trimmingCharacters(in: .whitespaces))`"
       case .emph(let text):
@@ -152,8 +152,9 @@ public enum TextFragment: Equatable, CustomStringConvertible, CustomDebugStringC
   /// Returns a debug description of this `TextFragment` object.
   public var debugDescription: String {
     switch self {
-      case .text(let str):
-        return "text(\(str.debugDescription))"
+      case .text(let str, let space):
+        return "text(\(str.debugDescription), " +
+               "\(space.debugDescription))"
       case .code(let str):
         return "code(\(str.debugDescription))"
       case .emph(let text):
