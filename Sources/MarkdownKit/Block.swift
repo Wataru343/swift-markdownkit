@@ -160,7 +160,7 @@ public enum Block: Equatable, CustomStringConvertible, CustomDebugStringConverti
       case .bullet(let space, let prefix):
         return "\(space.rawString)\(prefix) \(hasParagraph ? "" : "\n")\(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n"})\n"
       case .ordered(let space, let num, let delimiter):
-        return "\(space.rawString)\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) })\n"
+        return "\(space.rawString)\(num)\(delimiter) \(blocks.reduce("") { $0 + $1.rawString(depth: n + 1) + "\n" })\n"
       }
     case .paragraph(let text):
       return text.rawString
