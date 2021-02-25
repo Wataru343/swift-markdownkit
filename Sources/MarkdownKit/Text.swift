@@ -28,7 +28,7 @@ public struct Text: Collection, Equatable, CustomStringConvertible, CustomDebugS
   public typealias Index = ContiguousArray<TextFragment>.Index
   public typealias Iterator = ContiguousArray<TextFragment>.Iterator
 
-  private var fragments: ContiguousArray<TextFragment> = []
+  public var fragments: ContiguousArray<TextFragment> = []
 
   public init(_ str: Substring? = nil, space: Substring = "") {
     if let str = str {
